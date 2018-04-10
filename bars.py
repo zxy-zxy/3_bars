@@ -37,10 +37,17 @@ def get_closest_bar(data, longitude, latitude):
     return closest_bar
 
 
+def get_bar_presentation(bar_dict):
+    return "name : {}".format(bar_dict["properties"]["Attributes"]["Name"])
+
+
 if __name__ == "__main__":
     filename = os.path.join(ROOT_DIR, "data", "bars.json")
-    data = load_data(filename)
-    biggest_bar = get_biggest_bar(data)
-    smallest_bar = get_smallest_bar(data)
-    closest_bar = get_closest_bar(data, 50, 51)
-    print(closest_bar)
+    moscow_bars = load_data(filename)
+    longitude, latitude = map(float, input().split())
+    biggest_bar = get_biggest_bar(moscow_bars)
+    print("Biggest bar: {}".format(get_bar_presentation(biggest_bar)))
+    smallest_bar = get_smallest_bar(moscow_bars)
+    print("Smallest bar: {}".format(get_bar_presentation(smallest_bar)))
+    closest_bar = get_closest_bar(moscow_bars, longitude, latitude)
+    print("Closest bar: {}".format(get_bar_presentation(closest_bar)))

@@ -1,6 +1,7 @@
 # Ближайшие бары
 
-[FIXME. Здесь будет описание проекта]
+В файле data/bars.json представлена информация о московских барах. Данные предоставлены
+data.mos.ru
 
 # Как запустить
 
@@ -9,10 +10,18 @@
 Запуск на Linux:
 
 ```bash
-
 $ python bars.py # possibly requires call of python3 executive instead of just python
-# FIXME вывести пример ответа скрипта
-
+```
+#### Пример работы скрипта 
+Input example:
+````
+51.1231 52.121
+````
+Output example:
+```
+Biggest bar: name : Спорт бар «Красная машина»
+Smallest bar: name : БАР. СОКИ
+Closest bar: name : Таверна
 ```
 
 Запуск на Windows происходит аналогично.
