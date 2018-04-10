@@ -19,9 +19,9 @@ Input example:
 ````
 Output example:
 ```
-Biggest bar: name : Спорт бар «Красная машина»
-Smallest bar: name : БАР. СОКИ
-Closest bar: name : Таверна
+Biggest bar: Спорт бар «Красная машина»
+Smallest bar: БАР. СОКИ
+Closest bar: Staropramen
 ```
 
 Запуск на Windows происходит аналогично.

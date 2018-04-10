@@ -7,8 +7,8 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def load_data(filepath):
     with open(filepath) as file:
-        data = json.load(file)
-    return data
+        moscow_bars_data = json.load(file)
+    return moscow_bars_data
 
 
 def get_biggest_bar(moscow_bars):
@@ -38,7 +38,7 @@ def get_closest_bar(moscow_bars, longitude, latitude):
 
 
 def get_bar_presentation(bar_dict):
-    return "name : {}".format(bar_dict["properties"]["Attributes"]["Name"])
+    return "{}".format(bar_dict["properties"]["Attributes"]["Name"])
 
 
 if __name__ == "__main__":
