@@ -11,13 +11,13 @@ def load_data(filepath):
     return data
 
 
-def get_biggest_bar(data):
-    return max(data["features"],
+def get_biggest_bar(moscow_bars):
+    return max(moscow_bars["features"],
                key=lambda x: x["properties"]["Attributes"]["SeatsCount"])
 
 
-def get_smallest_bar(data):
-    return min(data["features"],
+def get_smallest_bar(moscow_bars):
+    return min(moscow_bars["features"],
                key=lambda x: x["properties"]["Attributes"]["SeatsCount"])
 
 
@@ -25,14 +25,14 @@ def calculate_distance(coordinates, longitude, latitude):
     return math.sqrt((coordinates[0] - longitude) ** 2 + (coordinates[1] - latitude) ** 2)
 
 
-def get_closest_bar(data, longitude, latitude):
+def get_closest_bar(moscow_bars, longitude, latitude):
     closest_bar = min(
-        data["features"],
-        key=(lambda coordinates: calculate_distance(
+        moscow_bars["features"],
+        key=lambda coordinates: calculate_distance(
             coordinates["geometry"]["coordinates"],
             longitude,
-            latitude)
-             )
+            latitude
+        )
     )
     return closest_bar
 
@@ -42,7 +42,7 @@ def get_bar_presentation(bar_dict):
 
 
 if __name__ == "__main__":
-    filename = os.path.join(ROOT_DIR, "data", "bars.json")
+    filename = os.path.join(ROOT_DIR, "data_folder", "bars.json")
     moscow_bars = load_data(filename)
     longitude, latitude = map(float, input().split())
     biggest_bar = get_biggest_bar(moscow_bars)
