@@ -1,33 +1,50 @@
-import json
-import os
+import sys
 import math
-
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+import json
+from json import JSONDecodeError
 
 
 def load_data(filepath):
-    with open(filepath) as file:
-        moscow_bars_list = json.load(file)
-    return moscow_bars_list
+    try:
+        with open(filepath) as file:
+            moscow_bars_raw = file.read()
+    except IOError as e:
+        print("Error has occured while opening the file: {}".format(e))
+        sys.exit(1)
+    try:
+        moscow_bars = json.loads(moscow_bars_raw)
+    except JSONDecodeError as e:
+        print("Error has occured while reading the data: {}".format(e))
+        sys.exit(1)
+
+    return moscow_bars
 
 
-def get_biggest_bar(moscow_bars_list):
-    return max(moscow_bars_list["features"],
-               key=lambda x: x["properties"]["Attributes"]["SeatsCount"])
+def get_information_about_capacity(bar):
+    return bar["properties"]["Attributes"]["SeatsCount"]
 
 
-def get_smallest_bar(moscow_bars_list):
-    return min(moscow_bars_list["features"],
-               key=lambda x: x["properties"]["Attributes"]["SeatsCount"])
+def get_biggest_bar(moscow_bars):
+    return max(
+        moscow_bars["features"],
+        key=lambda x: get_information_about_capacity(x)
+    )
+
+
+def get_smallest_bar(moscow_bars):
+    return min(
+        moscow_bars["features"],
+        key=lambda x: get_information_about_capacity(x)
+    )
 
 
 def calculate_distance(coordinates, longitude, latitude):
     return math.sqrt((coordinates[0] - longitude) ** 2 + (coordinates[1] - latitude) ** 2)
 
 
-def get_closest_bar(moscow_bars_list, longitude, latitude):
+def get_closest_bar(moscow_bars, longitude, latitude):
     closest_bar = min(
-        moscow_bars_list["features"],
+        moscow_bars["features"],
         key=lambda coordinates: calculate_distance(
             coordinates["geometry"]["coordinates"],
             longitude,
@@ -42,9 +59,13 @@ def get_bar_presentation(bar_dict):
 
 
 if __name__ == "__main__":
-    filename = os.path.join(ROOT_DIR, "data_folder", "bars.json")
+    filename = input("Please input filename: ")
     moscow_bars_list = load_data(filename)
-    longitude, latitude = map(float, input().split())
+    try:
+        longitude, latitude = map(float, input("Please input longitude and lattitude divided by space: ").split())
+    except ValueError as e:
+        print("Error has occured while parsing the data: {}".format(e))
+        sys.exit(1)
     biggest_bar = get_biggest_bar(moscow_bars_list)
     print("Biggest bar: {}".format(get_bar_presentation(biggest_bar)))
     smallest_bar = get_smallest_bar(moscow_bars_list)

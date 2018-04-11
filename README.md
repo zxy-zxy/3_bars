@@ -1,22 +1,24 @@
-# Ближайшие бары
+# Devman project 03 - Closest bars
+Simple script providing common information about Moscow's city bars.
 
-В файле data/bars.json представлена информация о московских барах. Данные предоставлены
-data.mos.ru
 
-# Как запустить
+### Usage
+Python 3.5 required.
+Data provided by [data.mos.ru](https://data.mos.ru/)
+#### How to get data
+1. Register at [data.mos.ru](https://data.mos.ru/) and get the API key.
+2. Download data <https://apidata.mos.ru/v1/features/1796?api_key={place_your_API_key_here}>.
+3. Put the file with data in same catalog with bars.py.
 
-Скрипт требует для своей работы установленного интерпретатора Python версии 3.5
-
-Запуск на Linux:
-
-```bash
-$ python bars.py # possibly requires call of python3 executive instead of just python
+### Example use 
 ```
-#### Пример работы скрипта 
+$ python bars.py  
+```
 Input example:
-````
-51.1231 52.121
-````
+```
+Please input filename: bars.json
+Please input longitude and lattitude divided by space: 31.435454 32.34345
+```
 Output example:
 ```
 Biggest bar: Спорт бар «Красная машина»
@@ -24,8 +26,5 @@ Smallest bar: БАР. СОКИ
 Closest bar: Staropramen
 ```
 
-Запуск на Windows происходит аналогично.
-
-# Цели проекта
-
-Код создан в учебных целях. В рамках учебного курса по веб-разработке - [DEVMAN.org](https://devman.org)
+# About
+Study project at [DEVMAN.org](https://devman.org)
