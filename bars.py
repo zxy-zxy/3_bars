@@ -10,12 +10,12 @@ def load_data(filepath):
             moscow_bars_raw = file.read()
     except IOError as e:
         print("Error has occured while opening the file: {}".format(e))
-        sys.exit(1)
+        return None
     try:
         moscow_bars = json.loads(moscow_bars_raw)
     except JSONDecodeError as e:
         print("Error has occured while reading the data: {}".format(e))
-        sys.exit(1)
+        return None
 
     return moscow_bars
 
@@ -61,6 +61,8 @@ def get_bar_presentation(bar_dict):
 if __name__ == "__main__":
     filename = input("Please input filename: ")
     moscow_bars_list = load_data(filename)
+    if moscow_bars_list is None:
+        sys.exit(1)
     try:
         longitude, latitude = map(float, input("Please input longitude and lattitude divided by space: ").split())
     except ValueError as e:
