@@ -65,7 +65,9 @@ def get_smallest_bar(moscow_bars_list):
 
 
 def calculate_distance(coordinates, longitude, latitude):
-    return math.sqrt((coordinates[0] - longitude) ** 2 + (coordinates[1] - latitude) ** 2)
+    return math.sqrt(
+        (coordinates[0] - longitude) ** 2 + (coordinates[1] - latitude) ** 2
+    )
 
 
 def get_closest_bar(moscow_bars_list, longitude, latitude):
@@ -116,7 +118,11 @@ if __name__ == "__main__":
 
     biggest_bar = get_biggest_bar(moscow_bars_list)
     smallest_bar = get_smallest_bar(moscow_bars_list)
-    closest_bar = get_closest_bar(moscow_bars_list, longitude, latitude)
+    closest_bar = get_closest_bar(
+        moscow_bars_list,
+        longitude,
+        latitude
+    )
 
     print(
         get_found_bars_presentation(
