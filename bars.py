@@ -1,40 +1,66 @@
 import sys
+import argparse
 import math
 import json
 from json import JSONDecodeError
 
 
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-filepath",
+        type=str,
+        help="Please provide a filepath.",
+        required=True
+    )
+    parser.add_argument(
+        "-longitude",
+        type=float,
+        help="Please input a longitude of current location with format  \".15f\"",
+        required=True
+    )
+    parser.add_argument(
+        "-latitude",
+        type=float,
+        help="Please input a latitude of current location with format \".15f\"",
+        required=True
+    )
+
+    return parser
+
+
 def load_data(filepath):
     try:
         with open(filepath) as file:
-            moscow_bars_raw = file.read()
-    except IOError as e:
-        print("Error has occured while opening the file: {}".format(e))
+            moscow_bars_raw_data = file.read()
+            return moscow_bars_raw_data
+    except FileNotFoundError as e:
         return None
+
+
+def read_data(raw_data):
     try:
-        moscow_bars = json.loads(moscow_bars_raw)
+        moscow_bars_data = json.loads(raw_data)
+        return moscow_bars_data
     except JSONDecodeError as e:
-        print("Error has occured while reading the data: {}".format(e))
         return None
 
-    return moscow_bars
 
-
-def get_information_about_capacity(bar):
+def get_bar_seats_count(bar):
     return bar["properties"]["Attributes"]["SeatsCount"]
 
 
-def get_biggest_bar(moscow_bars):
+def get_biggest_bar(moscow_bars_list):
     return max(
-        moscow_bars["features"],
-        key=lambda x: get_information_about_capacity(x)
+        moscow_bars_list,
+        key=lambda x: get_bar_seats_count(x)
     )
 
 
-def get_smallest_bar(moscow_bars):
+def get_smallest_bar(moscow_bars_list):
     return min(
-        moscow_bars["features"],
-        key=lambda x: get_information_about_capacity(x)
+        moscow_bars_list,
+        key=lambda x: get_bar_seats_count(x)
     )
 
 
@@ -42,9 +68,9 @@ def calculate_distance(coordinates, longitude, latitude):
     return math.sqrt((coordinates[0] - longitude) ** 2 + (coordinates[1] - latitude) ** 2)
 
 
-def get_closest_bar(moscow_bars, longitude, latitude):
+def get_closest_bar(moscow_bars_list, longitude, latitude):
     closest_bar = min(
-        moscow_bars["features"],
+        moscow_bars_list,
         key=lambda coordinates: calculate_distance(
             coordinates["geometry"]["coordinates"],
             longitude,
@@ -54,23 +80,50 @@ def get_closest_bar(moscow_bars, longitude, latitude):
     return closest_bar
 
 
-def get_bar_presentation(bar_dict):
-    return "{}".format(bar_dict["properties"]["Attributes"]["Name"])
+def get_found_bars_presentation(found_bars):
+    return "\n".join(
+        map(
+            lambda x:
+            "Category: {}, Name: {}".format(
+                x[0],
+                x[1]["properties"]["Attributes"]["Name"]
+            ),
+            found_bars
+        )
+    )
 
 
 if __name__ == "__main__":
-    filename = input("Please input filename: ")
-    moscow_bars_list = load_data(filename)
-    if moscow_bars_list is None:
-        sys.exit(1)
-    try:
-        longitude, latitude = map(float, input("Please input longitude and lattitude divided by space: ").split())
-    except ValueError as e:
-        print("Error has occured while parsing the data: {}".format(e))
-        sys.exit(1)
+    args_parser = create_parser()
+    args = args_parser.parse_args()
+
+    filepath = args.filepath
+    longitude = args.longitude
+    latitude = args.latitude
+
+    moscow_bars_raw_data = load_data(filepath)
+    if moscow_bars_raw_data is None:
+        sys.exit('File "{}" not found.'.format(filepath))
+
+    moscow_bars_data = read_data(moscow_bars_raw_data)
+    if moscow_bars_data is None:
+        sys.exit('Error has occured while reading data.')
+
+    if not "features" in moscow_bars_data.keys():
+        sys.exit('Wrong file format.')
+
+    moscow_bars_list = moscow_bars_data["features"]
+
     biggest_bar = get_biggest_bar(moscow_bars_list)
-    print("Biggest bar: {}".format(get_bar_presentation(biggest_bar)))
     smallest_bar = get_smallest_bar(moscow_bars_list)
-    print("Smallest bar: {}".format(get_bar_presentation(smallest_bar)))
     closest_bar = get_closest_bar(moscow_bars_list, longitude, latitude)
-    print("Closest bar: {}".format(get_bar_presentation(closest_bar)))
+
+    print(
+        get_found_bars_presentation(
+            [
+                ("Biggest bar", biggest_bar),
+                ("Smallest bar", smallest_bar),
+                ("Closest bar", closest_bar)
+            ]
+        )
+    )
