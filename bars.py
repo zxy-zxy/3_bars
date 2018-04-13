@@ -5,40 +5,6 @@ import json
 from json import JSONDecodeError
 
 
-def process_user_input():
-    args_parser = create_parser()
-    args = args_parser.parse_args()
-
-    filepath = args.filepath
-    longitude = args.longitude
-    latitude = args.latitude
-
-    return filepath, longitude, latitude
-
-
-def process_moscow_bars_list(moscow_bars_list):
-    biggest_bar = get_biggest_bar(moscow_bars_list)
-    smallest_bar = get_smallest_bar(moscow_bars_list)
-    closest_bar = get_closest_bar(
-        moscow_bars_list,
-        longitude,
-        latitude
-    )
-    return [
-        ("Biggest bar", biggest_bar),
-        ("Smallest bar", smallest_bar),
-        ("Closest bar", closest_bar)
-    ]
-
-
-def print_moscow_bars(moscow_bars_list_to_print):
-    for (category, bar) in moscow_bars_list_to_print:
-        print("Category: {}, name: {}".format(
-            category,
-            get_found_bar_presentation(bar))
-        )
-
-
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -106,16 +72,17 @@ def get_closest_bar(moscow_bars_list, longitude, latitude):
     return closest_bar
 
 
-def get_found_bar_presentation(found_bar):
-    return found_bar["properties"]["Attributes"]["Name"]
+def print_bar(Category, bar):
+    print("{}: {}".format(Category, bar["properties"]["Attributes"]["Name"]))
 
 
 if __name__ == "__main__":
 
-    filepath, longitude, latitude = process_user_input()
+    args_parser = create_parser()
+    args = args_parser.parse_args()
 
     try:
-        moscow_bars_data = load_moscow_bars_data(filepath)
+        moscow_bars_data = load_moscow_bars_data(args.filepath)
     except FileNotFoundError:
         sys.exit("Error has occured while reading data")
     except JSONDecodeError:
@@ -125,6 +92,13 @@ if __name__ == "__main__":
     if moscow_bars_list is None:
         sys.exit("Wrong file format.")
 
-    moscow_bars_list_to_print = process_moscow_bars_list(moscow_bars_list)
-
-    print_moscow_bars(moscow_bars_list_to_print)
+    biggest_bar = get_biggest_bar(moscow_bars_list)
+    print_bar("Biggest bar", biggest_bar)
+    smallest_bar = get_smallest_bar(moscow_bars_list)
+    print_bar("Smallest bar", smallest_bar)
+    closest_bar = get_closest_bar(
+        moscow_bars_list,
+        args.longitude,
+        args.latitude
+    )
+    print_bar("Closest bar", closest_bar)
