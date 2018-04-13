@@ -72,8 +72,8 @@ def get_closest_bar(moscow_bars_list, longitude, latitude):
     return closest_bar
 
 
-def print_bar(Category, bar):
-    print("{}: {}".format(Category, bar["properties"]["Attributes"]["Name"]))
+def print_bar(category, bar):
+    print("{}: {}".format(category, bar["properties"]["Attributes"]["Name"]))
 
 
 if __name__ == "__main__":
