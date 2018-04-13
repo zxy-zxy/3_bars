@@ -30,16 +30,10 @@ def create_parser():
 
 
 def load_moscow_bars_data(filepath):
-    try:
-        with open(filepath) as file:
-            raw_data = file.read()
-    except FileNotFoundError:
-        return None
-    try:
-        moscow_bars_data = json.loads(raw_data)
-        return moscow_bars_data
-    except JSONDecodeError:
-        return None
+    with open(filepath) as file:
+        raw_data = file.read()
+    moscow_bars_data = json.loads(raw_data)
+    return moscow_bars_data
 
 
 def get_bar_seats_count(bar):
@@ -90,13 +84,16 @@ if __name__ == "__main__":
     longitude = args.longitude
     latitude = args.latitude
 
-    moscow_bars_data = load_moscow_bars_data(filepath)
-    if moscow_bars_data is None:
-        sys.exit('Error has occured while reading data.')
+    try:
+        moscow_bars_data = load_moscow_bars_data(filepath)
+    except FileNotFoundError:
+        sys.exit("Error has occured while reading data")
+    except JSONDecodeError:
+        sys.exit("Error has occured while parsing data")
 
     moscow_bars_list = moscow_bars_data.get("features")
     if moscow_bars_list is None:
-        sys.exit('Wrong file format.')
+        sys.exit("Wrong file format.")
 
     biggest_bar = get_biggest_bar(moscow_bars_list)
     smallest_bar = get_smallest_bar(moscow_bars_list)
