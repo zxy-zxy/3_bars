@@ -16,33 +16,29 @@ def create_parser():
     parser.add_argument(
         "-longitude",
         type=float,
-        help="Please input a longitude of current location with format  \".15f\"",
+        help="Please input a longitude of current location with format  '.15f'",
         required=True
     )
     parser.add_argument(
         "-latitude",
         type=float,
-        help="Please input a latitude of current location with format \".15f\"",
+        help="Please input a latitude of current location with format '.15f'",
         required=True
     )
 
     return parser
 
 
-def load_data(filepath):
+def load_moscow_bars_data(filepath):
     try:
         with open(filepath) as file:
-            moscow_bars_raw_data = file.read()
-            return moscow_bars_raw_data
-    except FileNotFoundError as e:
+            raw_data = file.read()
+    except FileNotFoundError:
         return None
-
-
-def read_data(raw_data):
     try:
         moscow_bars_data = json.loads(raw_data)
         return moscow_bars_data
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return None
 
 
@@ -82,17 +78,8 @@ def get_closest_bar(moscow_bars_list, longitude, latitude):
     return closest_bar
 
 
-def get_found_bars_presentation(found_bars):
-    return "\n".join(
-        map(
-            lambda x:
-            "Category: {}, Name: {}".format(
-                x[0],
-                x[1]["properties"]["Attributes"]["Name"]
-            ),
-            found_bars
-        )
-    )
+def get_found_bar_presentation(found_bar):
+    return found_bar["properties"]["Attributes"]["Name"]
 
 
 if __name__ == "__main__":
@@ -103,18 +90,13 @@ if __name__ == "__main__":
     longitude = args.longitude
     latitude = args.latitude
 
-    moscow_bars_raw_data = load_data(filepath)
-    if moscow_bars_raw_data is None:
-        sys.exit('File "{}" not found.'.format(filepath))
-
-    moscow_bars_data = read_data(moscow_bars_raw_data)
+    moscow_bars_data = load_moscow_bars_data(filepath)
     if moscow_bars_data is None:
         sys.exit('Error has occured while reading data.')
 
-    if not "features" in moscow_bars_data.keys():
+    moscow_bars_list = moscow_bars_data.get("features")
+    if moscow_bars_list is None:
         sys.exit('Wrong file format.')
-
-    moscow_bars_list = moscow_bars_data["features"]
 
     biggest_bar = get_biggest_bar(moscow_bars_list)
     smallest_bar = get_smallest_bar(moscow_bars_list)
@@ -125,11 +107,18 @@ if __name__ == "__main__":
     )
 
     print(
-        get_found_bars_presentation(
-            [
-                ("Biggest bar", biggest_bar),
-                ("Smallest bar", smallest_bar),
-                ("Closest bar", closest_bar)
-            ]
+        "\n".join(
+            map(
+                lambda x:
+                "Category: {}, name: ".format(
+                    x[0],
+                    get_found_bar_presentation(x[1])
+                ),
+                [
+                    ("Biggest bar", biggest_bar),
+                    ("Smallest bar", smallest_bar),
+                    ("Closest bar", closest_bar)
+                ]
+            )
         )
     )
