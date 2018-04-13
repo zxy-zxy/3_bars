@@ -106,19 +106,14 @@ if __name__ == "__main__":
         latitude
     )
 
-    print(
-        "\n".join(
-            map(
-                lambda x:
-                "Category: {}, name: ".format(
-                    x[0],
-                    get_found_bar_presentation(x[1])
-                ),
-                [
-                    ("Biggest bar", biggest_bar),
-                    ("Smallest bar", smallest_bar),
-                    ("Closest bar", closest_bar)
-                ]
-            )
+    moscow_bars_list_to_print = [
+        ("Biggest bar", biggest_bar),
+        ("Smallest bar", smallest_bar),
+        ("Closest bar", closest_bar)
+    ]
+
+    for (category, bar) in moscow_bars_list_to_print:
+        print("Category: {}, name: {}".format(
+            category,
+            get_found_bar_presentation(bar))
         )
-    )
