@@ -31,6 +31,14 @@ def process_moscow_bars_list(moscow_bars_list):
     ]
 
 
+def print_moscow_bars(moscow_bars_list_to_print):
+    for (category, bar) in moscow_bars_list_to_print:
+        print("Category: {}, name: {}".format(
+            category,
+            get_found_bar_presentation(bar))
+        )
+
+
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -119,8 +127,4 @@ if __name__ == "__main__":
 
     moscow_bars_list_to_print = process_moscow_bars_list(moscow_bars_list)
 
-    for (category, bar) in moscow_bars_list_to_print:
-        print("Category: {}, name: {}".format(
-            category,
-            get_found_bar_presentation(bar))
-        )
+    print_moscow_bars(moscow_bars_list_to_print)
